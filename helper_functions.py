@@ -23,15 +23,32 @@ def steam_checker(membership_data):
 
 
 def endpoint_to_Response(link):
+    """
+    Changes the endpoint that is passed in into a workable Response
+
+    Args:
+        link (str): The link to the endpoint 
+
+    Returns:
+        endpoint_json["Response"] (dict): The Response from endpoint
+    """
     x_api_key = os.environ.get("bungie_key")
     HEADERS = {"X-API-Key":x_api_key}
     starter = "https://www.bungie.net/Platform"
 
     endpoint = requests.get(starter + link, headers=HEADERS)
     endpoint_json = endpoint.json()
-    #pp.pprint(endpoint_json["Response"])
 
     return endpoint_json["Response"]
+
+
+def get_activity_hashes(activities):
+    activity_hashes = []
+    for activity in activities:
+        activity_hashes.append(activity["activityDetails"]["directorActivityHash"])
+
+    # print(activity_hashes)
+    return activity_hashes
 
 
 def thing():
