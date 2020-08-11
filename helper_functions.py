@@ -37,9 +37,12 @@ def endpoint_to_Response(link):
     starter = "https://www.bungie.net/Platform"
 
     endpoint = requests.get(starter + link, headers=HEADERS)
-    endpoint_json = endpoint.json()
+    try:
+        endpoint_json = endpoint.json()
 
-    return endpoint_json["Response"]
+        return endpoint_json["Response"]
+    except:
+        return "No Response"
 
 
 def get_activity_hashes(activities):
@@ -56,5 +59,4 @@ def get_activity_hashes(activities):
     for activity in activities:
         activity_hashes.append(activity["activityDetails"]["directorActivityHash"])
 
-    # print(activity_hashes)
     return activity_hashes
