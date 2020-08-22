@@ -60,3 +60,10 @@ def get_activity_hashes(activities):
         activity_hashes.append(activity["activityDetails"]["directorActivityHash"])
 
     return activity_hashes
+
+
+def write_to_file(file_name, data):
+    with open(file_name, "w") as file_out:
+        file_out.write(data)
+        
+    print("finished writing.")

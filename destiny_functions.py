@@ -1,6 +1,9 @@
 from helper_functions import (steam_checker, endpoint_to_Response, 
     get_activity_hashes)
 
+import pprint
+pp = pprint.PrettyPrinter()
+
 
 ### api functions
 
@@ -44,10 +47,18 @@ def membership_type(bungie_membership_id):
     ## getting membershipType for matthew
     steam_user = steam_checker(MT_Response["destinyMemberships"])
     user_MT =steam_user["membershipType"]
-    # pp.pprint(MT_Response)
+    pp.pprint(MT_Response)
 
     return user_MT
 
+
+def destiny_memberships(bungie_membership_id):
+    MT_link = "/User/GetMembershipsById/{}/254/".format(bungie_membership_id)
+    MT_Response = endpoint_to_Response(MT_link)
+    ## getting membershipType for matthew
+    memberships = MT_Response["destinyMemberships"]
+
+    return memberships
 
 ## SEARCH DESTINY PLAYER
 ## testing out searching for a player endpoint
@@ -160,23 +171,16 @@ def get_destiny_aggregate_activity_stats(membership_type, destiny_membership_id,
     return GDAAS_Response
 
 
-def add_display_properties(activity_stats):
+def add_activity_definition(activity_stats):
     for index, activity in enumerate(activity_stats):
         temp = activity_stats[index]
         temp_hash = temp["activityHash"]
         definition = get_destiny_entity_definition("DestinyActivityDefinition", temp_hash)
         if (type(definition) != type("")):
-            temp["displayProperties"] = definition["displayProperties"]
+            temp["activityDefinition"] = definition
         else:
-            temp["displayProperties"] = "No Display Properties"
+            temp["activityDefinition"] = "No Activity Definition"
 
         activity_stats[index] = temp
 
     return activity_stats
-
-
-
-## testing out carnage report
-# CR_endpoint = requests.get("/Destiny2/Stats/PostGameCarnageReport/{activityId}/".format(activity_id), headers=HEADERS)
-# CR_endpoint_json = CR_endpoint.json()
-# pp.pprint(CR_endpoint_json["Response"])
