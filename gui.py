@@ -36,40 +36,29 @@ class DestinyApp(tk.Tk):
         self.matthews_bmid = tk.Label(self, text="15882728")
         self.matthews_bmid.grid(row=3, column=1)
 
-        # this one
-        self.OptionList = ["character1", "character2", "character3"]
+        self.OptionList = ["Choose your character", "character1", "character2", "character3"]
         self.variable = tk.StringVar(self)
         self.variable.set(self.OptionList[0])
         self.dropdown_list = tk.OptionMenu(self, self.variable, *self.OptionList)
+        self.dropdown_list.configure(state="disabled")
         self.dropdown_list.grid(row=0, column=2)
-        # self.character_label = tk.Label(self)
-        # self.character_label.grid(row=0, column=2)
-
-        # self.character_input = tk.Entry(self)
-        # self.character_input.grid(row=1, column=2)
 
         self.character_information_button = tk.Button(
             self,
-            text="load character information",
-            command=self.load_character_information
+            text="print character information",
+            command=self.load_character_information,
         )
+        self.character_information_button.configure(state="disabled")
         self.character_information_button.grid(row=2, column=2)
-
-        # self.refresh_button = tk.Button(
-        #     self,
-        #     text="refresh the character list",
-        #     command=self.refresh_characters
-        # )
-        # self.refresh_button.grid(row=3, column=2)
 
 
     def refresh_characters(self, character_list):
         self.variable.set("")
         self.dropdown_list["menu"].delete(0, "end")
+        character_list.insert(0, "Choose your character")
 
         new_choices = character_list
-        # new_choices = ["titan1", "warlock2", "maybe no hunter"]
-        self.variable.set(new_choices[0])
+        self.variable.set(character_list[0])
         for choice in new_choices:
             self.dropdown_list["menu"].add_command(label=choice, command=tk._setit(self.variable, choice))
 
@@ -91,15 +80,21 @@ class DestinyApp(tk.Tk):
         self.current_profile = get_profile(self.current_mt, self.current_dmid)
         pp.pprint(self.current_profile)
 
-        # self.character_label["text"] = self.current_profile["profile"]["data"]["characterIds"]
+        # enable the things
+        self.dropdown_list.configure(state="active")
+        self.character_information_button.configure(state="active")
+
+        # this is just grabbing the character IDs from the profile
         self.refresh_characters(self.current_profile["profile"]["data"]["characterIds"])
 
 
     def load_character_information(self):
-        # self.current_cid = self.character_input.get()
         self.current_cid = self.variable.get()
 
-        pp.pprint(get_character(self.current_mt, self.current_dmid, self.current_cid))
+        if self.current_cid == "Choose your character":
+            pp.pprint("Please choose your character")
+        else:
+            pp.pprint(get_character(self.current_mt, self.current_dmid, self.current_cid))
 
 
     # TODO: make a button that gets and prints all of the activity stats to file
