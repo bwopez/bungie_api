@@ -6,9 +6,14 @@ from destiny_functions import (
     get_destiny_entity_definition, get_destiny_aggregate_activity_stats,
     add_activity_definition
 )
+from helper_functions import (
+    format_character_response
+)
 
 import pprint
 pp = pprint.PrettyPrinter()
+
+import json
 
 
 class DestinyApp(tk.Tk):
@@ -105,17 +110,16 @@ class DestinyApp(tk.Tk):
             pp.pprint("Please choose your character")
         else:
             response = get_character(self.current_mt, self.current_dmid, self.current_cid)
-            pp.pprint(response)
 
-        self.formatting_destiny_stats(response["character"]["data"]["stats"].keys())
+            # TODO: 2. make something so that a human can read the Character stats and not a computer hash
+            new_response = format_character_response(response)
+            pp.pprint(new_response)
 
-        # for stat in response["character"]["data"]["stats"].keys():
-        #     print(stat, ":", response["character"]["data"]["stats"][stat])
-        #     pp.pprint(get_destiny_entity_definition("DestinyStatDefinition", stat))
-        #     print()
+        # self.formatting_destiny_stats(response["character"]["data"]["stats"].keys())
 
 
-    # TODO: make a button that gets and prints all of the activity stats to file
+
+    # TODO: 1. make a button that gets and prints all of the activity stats to file
 
 
     # variables

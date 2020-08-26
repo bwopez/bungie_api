@@ -1,5 +1,6 @@
 import requests
 import os
+import json
 
 
 ### helper functions
@@ -60,6 +61,19 @@ def get_activity_hashes(activities):
         activity_hashes.append(activity["activityDetails"]["directorActivityHash"])
 
     return activity_hashes
+
+
+def format_character_response(response):
+    with open("destiny_api_globals.json") as f:
+        data = json.load(f)
+        character_stats_dict = {}
+        for stat in response["character"]["data"]["stats"].keys():
+            stat_name = data["DestinyCharacterStats"][stat]["name"]
+            character_stats_dict[stat_name] = response["character"]["data"]["stats"][stat]
+
+        response["character"]["data"]["stats"] = character_stats_dict
+        
+    return response
 
 
 def write_to_file(file_name, data):
