@@ -93,18 +93,10 @@ class DestinyApp(tk.Tk):
         self.refresh_characters(self.current_profile["profile"]["data"]["characterIds"])
 
 
-    def formatting_destiny_stats(self, stats):
-        for stat in stats:
-            thing = get_destiny_entity_definition("DestinyStatDefinition", stat)
-            dictionary_thing = {}
-            # dictionary_thing["displayProperties"] = thing["displayProperties"]
-            dictionary_thing[stat] = thing["displayProperties"]
-            # pp.pprint(dictionary_thing)
-            print(dictionary_thing)
-
-
     def load_character_information(self):
         self.current_cid = self.variable.get()
+
+        # TODO: 3. maybe cache a character response so that we won't need to make another api call if we don't need to
 
         if self.current_cid == "Choose your character":
             pp.pprint("Please choose your character")
@@ -114,8 +106,6 @@ class DestinyApp(tk.Tk):
             # TODO: 2. make something so that a human can read the Character stats and not a computer hash
             new_response = format_character_response(response)
             pp.pprint(new_response)
-
-        # self.formatting_destiny_stats(response["character"]["data"]["stats"].keys())
 
 
 
