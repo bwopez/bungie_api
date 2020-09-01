@@ -64,6 +64,15 @@ def get_activity_hashes(activities):
 
 
 def format_character_response(response):
+    """
+    A helper function to format a character response and put it into the destiny_api_globals.json file
+
+    Args:
+        response (list): The response that holds the character information to be translated
+
+    Returns:
+        None
+    """
     with open("destiny_api_globals.json") as f:
         data = json.load(f)
         character_stats_dict = {}
@@ -76,8 +85,23 @@ def format_character_response(response):
     return response
 
 
-def write_to_file(file_name, data):
-    with open(file_name, "w") as file_out:
-        file_out.write(data)
+def write_to_file(file_name, data, is_json):
+    """
+    A function that writes the data passed into the function to a named file
+
+    Args:
+        file_name (str): The name of the file
+        data (str): The data to write to file
+        is_json (bool): A way to differentiate if the file should be written as .json or .txt
+
+    Returns:
+        None
+    """
+    if is_json:
+        with open(file_name + ".json", "w") as file_out:
+            json.dump(data, file_out)
+    else:
+        with open(file_name + ".txt", "w") as file_out:
+            file_out.write(data)
         
     print("finished writing.")

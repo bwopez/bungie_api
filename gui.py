@@ -4,10 +4,10 @@ from destiny_functions import (
     search_destiny_player, get_profile,
     get_character, get_activity_history,
     get_destiny_entity_definition, get_destiny_aggregate_activity_stats,
-    add_activity_definition
+    add_activity_definition,
 )
 from helper_functions import (
-    format_character_response
+    format_character_response, write_to_file,
 )
 
 import pprint
@@ -56,8 +56,30 @@ class DestinyApp(tk.Tk):
         self.character_information_button.configure(state="disabled")
         self.character_information_button.grid(row=2, column=2)
 
+        self.activities_file_name = tk.Entry(self)
+        self.activities_file_name.configure(state="disabled")
+        self.activities_file_name.grid(row=1, column=3)
+
+        self.print_activities_to_file_button = tk.Button(
+            self,
+            text="print activities to file",
+            command=self.activities_to_file,
+        )
+        self.print_activities_to_file_button.configure(state="disabled")
+        self.print_activities_to_file_button.grid(row=2, column=3)
+
 
     def refresh_characters(self, character_list):
+        """
+        Refresh the character list
+
+        Args:
+            self
+            character_list (list): The list of characters to put into the list
+
+        Returns:
+            None
+        """
         self.variable.set("")
         self.dropdown_list["menu"].delete(0, "end")
         character_list.insert(0, "Choose your character")
@@ -69,6 +91,15 @@ class DestinyApp(tk.Tk):
 
 
     def load_personal_info(self):
+        """
+        Loads the information for the specific bungie.net user
+
+        Args:
+            self
+
+        Returns:
+            None
+        """
         # print bungie membership id
         self.current_id = self.bungie_id_input.get()
         print("current bungie.net id: ", self.current_id)
@@ -94,12 +125,24 @@ class DestinyApp(tk.Tk):
 
 
     def load_character_information(self):
+        """
+        Loads the character information for the chosen Destiny 2 character
+
+        Args:
+            self
+
+        Returns:
+            None
+        """
         self.current_cid = self.variable.get()
 
         # TODO: 3. maybe cache a character response so that we won't need to make another api call if we don't need to
 
         if self.current_cid == "Choose your character":
             pp.pprint("Please choose your character")
+
+            self.print_activities_to_file_button.configure(state="disabled")
+            self.activities_file_name.configure(state="disabled")
         else:
             response = get_character(self.current_mt, self.current_dmid, self.current_cid)
 
@@ -107,9 +150,27 @@ class DestinyApp(tk.Tk):
             new_response = format_character_response(response)
             pp.pprint(new_response)
 
+            self.print_activities_to_file_button.configure(state="normal")
+            self.activities_file_name.configure(state="normal")
 
 
     # TODO: 1. make a button that gets and prints all of the activity stats to file
+    def activities_to_file(self):
+        """
+        Save the Destiny aggregate activity stats to a file
+
+        Args:
+            self
+
+        Returns:
+            None
+        """
+        activity_stats = get_destiny_aggregate_activity_stats(self.current_mt, self.current_dmid, self.current_cid)["activities"]
+        activity_stats_and_definition = add_activity_definition(activity_stats)
+
+        file_name = self.activities_file_name.get()
+        # activity_stats_and_definition = pprint.pformat(activity_stats)
+        write_to_file(file_name, activity_stats_and_definition, True)
 
 
     # variables
