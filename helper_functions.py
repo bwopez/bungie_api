@@ -105,3 +105,49 @@ def write_to_file(file_name, data, is_json):
             file_out.write(data)
         
     print("finished writing.")
+
+
+def strip_the_json(file_name):
+    with open("{}{}".format(file_name, ".json")) as file_in:
+        data = json.load(file_in)
+
+
+        temp = []
+        for subset in data:
+            new_dict = {}
+            # activity mode types
+            # display properties:
+                # 1. name
+                # 2. description
+            if subset["activityDefinition"] == "No Activity Definition":
+                new_dict["name"] = "No name"
+                new_dict["description"] = "No description"
+                new_dict["activityModeTypes"] = []
+            else:
+                new_dict["name"] = subset["activityDefinition"]["displayProperties"]["name"]
+                new_dict["description"] = subset["activityDefinition"]["displayProperties"]["description"]
+                if "activityModeTypes" in subset["activityDefinition"].keys():
+                    new_dict["activityModeTypes"] = subset["activityDefinition"]["activityModeTypes"]
+                else:
+                    new_dict["activityModeTypes"] = []
+
+            # activity hash
+            # move all values out of values
+                # take information out of 'basic'
+                # remove displaValue
+                # remove statId OR remove activityId
+                # ONLY use value
+            new_dict["activityHash"] = subset["activityHash"]
+            for key in subset["values"].keys():
+                new_dict[key] = subset["values"][key]["basic"]["value"]
+
+            temp.append(new_dict)
+
+        with open("{}_cleanedish{}".format(file_name, ".json"), "w") as file_out:
+            json.dump(temp, file_out)
+
+    print("'{}{}' is now kaggle readable".format(file_name, ".json"))
+
+
+if __name__ == "__main__":
+    strip_the_json("titan2_but_json")

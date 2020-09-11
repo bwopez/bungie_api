@@ -7,7 +7,7 @@ from destiny_functions import (
     add_activity_definition,
 )
 from helper_functions import (
-    format_character_response, write_to_file,
+    format_character_response, write_to_file, strip_the_json,
 )
 
 import pprint
@@ -67,6 +67,14 @@ class DestinyApp(tk.Tk):
         )
         self.print_activities_to_file_button.configure(state="disabled")
         self.print_activities_to_file_button.grid(row=2, column=3)
+
+        self.strip_the_json_button = tk.Button(
+            self,
+            text="make the data kaggle readable",
+            command=self.decompress_the_json
+        )
+        self.strip_the_json_button.configure(state="disabled")
+        self.strip_the_json_button.grid(row=2, column=4)
 
 
     def refresh_characters(self, character_list):
@@ -143,6 +151,7 @@ class DestinyApp(tk.Tk):
 
             self.print_activities_to_file_button.configure(state="disabled")
             self.activities_file_name.configure(state="disabled")
+            self.strip_the_json_button.configure(state="disabled")
         else:
             response = get_character(self.current_mt, self.current_dmid, self.current_cid)
 
@@ -152,9 +161,10 @@ class DestinyApp(tk.Tk):
 
             self.print_activities_to_file_button.configure(state="normal")
             self.activities_file_name.configure(state="normal")
+            self.strip_the_json_button.configure(state="normal")
 
 
-    # TODO: 1. make a button that gets and prints all of the activity stats to file
+    # make a button that gets and prints all of the activity stats to file
     def activities_to_file(self):
         """
         Save the Destiny aggregate activity stats to a file
@@ -171,6 +181,12 @@ class DestinyApp(tk.Tk):
         file_name = self.activities_file_name.get()
         # activity_stats_and_definition = pprint.pformat(activity_stats)
         write_to_file(file_name, activity_stats_and_definition, True)
+
+
+    # TODO: make a button that strips all of the stuff and formats it into kaggle readable
+    def decompress_the_json(self):
+        file_name = self.activities_file_name.get()
+        strip_the_json(file_name)
 
 
     # variables
